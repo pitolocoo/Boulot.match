@@ -12,7 +12,7 @@
       color: #333;
     }
     .container {
-      max-width: 600px;
+      max-width: 700px;
       margin: 0 auto;
       padding: 2rem;
       text-align: center;
@@ -33,6 +33,8 @@
       margin-top: 1rem;
       cursor: pointer;
       font-size: 18px;
+      display: block;
+      width: 100%;
     }
     .button:hover {
       background-color: #5548d9;
@@ -49,7 +51,7 @@
   <div class="container">
     <div id="intro" class="card">
       <h1>Boulot Match 🎯</h1>
-      <p>Réponds à 10 questions fun pour découvrir quel environnement de travail est fait pour toi !</p>
+      <p>Réponds à 10 questions pour découvrir quel environnement de travail est fait pour toi.</p>
       <button class="button" onclick="startGame()">Commencer l'aventure</button>
     </div>
     <div id="game" class="card hidden"></div>
@@ -57,33 +59,61 @@
 
   <script>
     const questions = [
-      { text: "Tu préfères commencer ta journée...", options: ["Avec un café en visio", "Autour d'une réunion d'équipe"] },
-      { text: "Ton espace de travail rêvé c’est...", options: ["Un canapé et du Wi-Fi", "Un bureau en open-space"] },
-      { text: "Comment prends-tu tes décisions ?", options: ["À l’instinct", "En suivant des process"] },
-      { text: "Travailler tard, c’est pour...", options: ["Quand je suis à fond dans un projet", "Rarement, je respecte mes horaires"] },
-      { text: "Ton boss idéal est...", options: ["Inspirationnel", "Structuré"] },
-      { text: "Ton rapport à la hiérarchie ?", options: ["Souple et horizontal", "Clair et vertical"] },
-      { text: "En réunion tu es plutôt...", options: ["Force de proposition", "Synthétique et pragmatique"] },
-      { text: "Tu bosses mieux quand...", options: ["Je suis libre de mon emploi du temps", "Mon agenda est bien organisé"] },
-      { text: "Tes collègues sont...", options: ["Des alliés créatifs", "Des partenaires fiables"] },
-      { text: "Face au changement tu es...", options: ["Adaptable et curieux", "Méthodique et prudent"] }
+      { text: "Tu préfères travailler...", options: ["en solo total", "avec des collègues et des échanges"] },
+      { text: "Tu as besoin...", options: ["de liberté totale", "de cadre structurant"] },
+      { text: "Tu es plus...", options: ["créatif et intuitif", "méthodique et logique"] },
+      { text: "Ton ambiance idéale...", options: ["dynamique et mouvante", "posée et stable"] },
+      { text: "Tu aimes...", options: ["lancer des idées et expérimenter", "optimiser ce qui existe"] },
+      { text: "Face à l'inconnu...", options: ["tu fonces !", "tu planifies."] },
+      { text: "Tu préfères un job...", options: ["peu défini mais libre", "avec des missions claires"] },
+      { text: "Ton équipe idéale...", options: ["créative et inspirante", "efficace et fiable"] },
+      { text: "Quand tu bosses tu veux...", options: ["changer le monde", "remplir ta mission"] },
+      { text: "Tu es le genre à...", options: ["inventer ton poste", "respecter l'organigramme"] }
     ];
 
-    const profiles = {
-      A: {
-        name: "Le Créatif Nomade",
-        description: "Tu brilles dans des environnements flexibles et stimulants. Start-up, freelance ou remote te vont à merveille !",
-        emoji: "🌈"
+    const profiles = [
+      {
+        name: "Le Créatif Visionnaire",
+        emoji: "🎨",
+        description: "Tu es fait·e pour explorer, inventer, sortir du cadre. Les environnements agiles et inspirants, comme les startups créatives, sont ton terrain de jeu."
       },
-      B: {
+      {
         name: "Le Stratège Structuré",
-        description: "Tu t’épanouis dans un cadre stable, bien organisé avec des rôles clairs. Tu excelles dans les grandes entreprises et les institutions.",
-        emoji: "🏢"
+        emoji: "🏛️",
+        description: "Tu excelles dans des systèmes clairs, bien organisés. Tu aimes atteindre des objectifs concrets et être reconnu pour ton efficacité."
+      },
+      {
+        name: "L'Autonome Engagé",
+        emoji: "🚀",
+        description: "Tu veux du sens, de l’indépendance, et de l'impact. Tu thrives dans des structures à mission, avec une liberté d’initiative."
+      },
+      {
+        name: "Le Collaboratif Organisé",
+        emoji: "🤝",
+        description: "Tu t'épanouis au sein d’une équipe fiable, dans un cadre où chacun connaît son rôle. Parfait pour des PME ou grandes boîtes humaines."
+      },
+      {
+        name: "L'Explorateur Agile",
+        emoji: "🧭",
+        description: "Tu as besoin de diversité, de mouvement, de découvertes. Tiers-lieux, coworkings et modes hybrides sont faits pour toi."
+      },
+      {
+        name: "Le Technicien Méthodique",
+        emoji: "🛠️",
+        description: "Tu adores optimiser, structurer, rendre les choses fluides. Tu seras heureux dans des environnements industriels, IT ou bien cadrés."
       }
+    ];
+
+    const score = {
+      creative: 0,
+      structure: 0,
+      autonomy: 0,
+      team: 0,
+      explorer: 0,
+      method: 0
     };
 
     let current = 0;
-    let score = 0;
 
     function startGame() {
       document.getElementById('intro').classList.add('hidden');
@@ -105,7 +135,21 @@
     }
 
     function answer(choice) {
-      if (choice === 0) score++;
+      const mapping = [
+        ["autonomy", "team"],
+        ["autonomy", "structure"],
+        ["creative", "method"],
+        ["explorer", "structure"],
+        ["creative", "method"],
+        ["explorer", "structure"],
+        ["autonomy", "method"],
+        ["creative", "team"],
+        ["creative", "structure"],
+        ["creative", "structure"]
+      ];
+      const axis = mapping[current];
+      score[axis[choice]] += 1;
+
       current++;
       if (current < questions.length) {
         showQuestion();
@@ -115,10 +159,21 @@
     }
 
     function showResult() {
-      const profile = score >= 5 ? profiles.A : profiles.B;
-      document.getElementById('game').innerHTML = `
-        <h2>${profile.emoji} ${profile.name}</h2>
-        <p>${profile.description}</p>
+      const game = document.getElementById('game');
+      const topScore = Object.entries(score).sort((a,b) => b[1] - a[1])[0][0];
+      const profileMap = {
+        creative: 0,
+        structure: 1,
+        autonomy: 2,
+        team: 3,
+        explorer: 4,
+        method: 5
+      };
+      const p = profiles[profileMap[topScore]];
+
+      game.innerHTML = `
+        <h2>${p.emoji} ${p.name}</h2>
+        <p>${p.description}</p>
         <button class="button" onclick="location.reload()">Rejouer</button>
       `;
     }
