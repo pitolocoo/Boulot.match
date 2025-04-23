@@ -1,1 +1,609 @@
-file:///C:/Users/Enchanted/Downloads/index.html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boulot Match - Découvre ton environnement de travail idéal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            transition: width 0.5s ease;
+        }
+        
+        .option-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-color: #3b82f6;
+        }
+        
+        .option-card.selected {
+            border-color: #8b5cf6;
+            background-color: #f5f3ff;
+        }
+        
+        .avatar {
+            transition: all 0.5s ease;
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+        
+        .avatar.active {
+            opacity: 1;
+            filter: grayscale(0%);
+            transform: scale(1.1);
+        }
+        
+        .result-card {
+            transform: scale(0.9);
+            opacity: 0;
+            animation: fadeInUp 0.8s forwards;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        
+        .bg-gradient-start {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        }
+        
+        .bg-gradient-startup {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+        }
+        
+        .bg-gradient-corporate {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+        
+        .bg-gradient-remote {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+        }
+        
+        .result-bar {
+            height: 10px;
+            border-radius: 5px;
+            margin-top: 8px;
+        }
+        
+        .startup-bar {
+            background: linear-gradient(90deg, #f59e0b, #ef4444);
+        }
+        
+        .corporate-bar {
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+        }
+        
+        .remote-bar {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+    </style>
+</head>
+<body>
+    <!-- Écran d'accueil -->
+    <div id="welcome-screen" class="min-h-screen flex flex-col items-center justify-center bg-gradient-start text-white p-6">
+        <div class="max-w-2xl text-center animate_animated animate_fadeIn">
+            <h1 class="text-5xl font-bold mb-6 animate_animated animate_bounceIn">Boulot Match</h1>
+            <p class="text-xl mb-8 animate_animated animate_fadeInUp">Plonge dans une aventure ludique pour découvrir ton environnement de travail idéal !</p>
+            <p class="mb-10 text-lg animate_animated animate_fadeInUp delay-1">À mi-chemin entre le jeu de rôle et le test de personnalité, réponds aux questions pour construire ton profil Boulot.</p>
+            
+            <div class="flex justify-center space-x-6 mb-12">
+                <div class="avatar w-24 h-24 rounded-full bg-white/20 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <div class="avatar w-24 h-24 rounded-full bg-white/20 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <div class="avatar w-24 h-24 rounded-full bg-white/20 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                    </svg>
+                </div>
+            </div>
+            
+            <button id="start-btn" class="px-8 py-3 bg-white text-indigo-600 rounded-full font-bold text-lg hover:bg-indigo-100 transition-all transform hover:scale-105 animate_animated animatepulse animate_infinite">
+                Commencer l'aventure
+            </button>
+        </div>
+    </div>
+
+    <!-- Écran du questionnaire -->
+    <div id="quiz-screen" class="min-h-screen hidden flex-col items-center p-6">
+        <div class="w-full max-w-3xl">
+            <!-- Barre de progression -->
+            <div class="mb-8">
+                <div class="flex justify-between mb-2">
+                    <span id="progress-text" class="font-medium text-gray-600">Question 1/8</span>
+                    <span id="score-text" class="font-medium text-gray-600">Score: Startup 0% | Corporate 0% | Remote 0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <!-- Avatars observateurs -->
+            <div class="flex justify-between mb-8 px-4">
+                <div id="startup-avatar" class="avatar flex flex-col items-center">
+                    <div class="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <span class="text-xs font-medium text-gray-500">Startup</span>
+                </div>
+                <div id="corporate-avatar" class="avatar flex flex-col items-center">
+                    <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <span class="text-xs font-medium text-gray-500">Corporate</span>
+                </div>
+                <div id="remote-avatar" class="avatar flex flex-col items-center">
+                    <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                        </svg>
+                    </div>
+                    <span class="text-xs font-medium text-gray-500">Remote</span>
+                </div>
+            </div>
+            
+            <!-- Question -->
+            <div id="question-container" class="bg-white rounded-xl shadow-lg p-8 mb-8 animate_animated animate_fadeIn">
+                <h2 id="question-text" class="text-2xl font-bold mb-6 text-gray-800">Quel est pour toi l'élément le plus important dans un travail ?</h2>
+                
+                <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Les options seront ajoutées dynamiquement ici -->
+                </div>
+            </div>
+            
+            <!-- Boutons de navigation -->
+            <div class="flex justify-between">
+                <button id="prev-btn" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all hidden">
+                    ← Précédent
+                </button>
+                <button id="next-btn" class="ml-auto px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-all hidden">
+                    Suivant →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran des résultats -->
+    <div id="result-screen" class="min-h-screen hidden flex-col items-center justify-center p-6 bg-gray-50">
+        <div class="max-w-2xl w-full text-center">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800 animate_animated animate_fadeIn">Ton profil Boulot Match est...</h2>
+            
+            <div id="result-container" class="flex flex-col items-center">
+                <!-- Le résultat sera affiché ici dynamiquement -->
+            </div>
+            
+            <div class="mt-8 max-w-2xl mx-auto">
+                <div class="stat-card p-6 mb-6 bg-white rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">Quelques statistiques intéressantes</h3>
+                    <p class="text-gray-600 mb-4">Savais-tu que parmi nos utilisateurs :</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-indigo-50 p-4 rounded-lg">
+                            <div class="text-indigo-600 font-bold text-2xl mb-2">42%</div>
+                            <p class="text-sm text-gray-600">préfèrent les environnements startup</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <div class="text-blue-600 font-bold text-2xl mb-2">35%</div>
+                            <p class="text-sm text-gray-600">s'épanouissent en entreprise traditionnelle</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <div class="text-green-600 font-bold text-2xl mb-2">23%</div>
+                            <p class="text-sm text-gray-600">choisissent le travail remote avant tout</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card p-6 bg-white rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">Ton score détaillé</h3>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <span class="font-medium">Startup Dynamique</span>
+                            <span id="startup-score" class="font-bold">0%</span>
+                        </div>
+                        <div class="result-bar startup-bar" id="startup-bar" style="width: 0%"></div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <span class="font-medium">Corporate Stylé</span>
+                            <span id="corporate-score" class="font-bold">0%</span>
+                        </div>
+                        <div class="result-bar corporate-bar" id="corporate-bar" style="width: 0%"></div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="font-medium">Remote Tout Confort</span>
+                            <span id="remote-score" class="font-bold">0%</span>
+                        </div>
+                        <div class="result-bar remote-bar" id="remote-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12 animate_animated animate_fadeIn delay-1">
+                <button id="restart-btn" class="px-8 py-3 bg-indigo-600 text-white rounded-full font-bold text-lg hover:bg-indigo-700 transition-all">
+                    Refaire le test
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Données du questionnaire
+        const questions = [
+            {
+                question: "Quel est pour toi l'élément le plus important dans un travail ?",
+                options: [
+                    { text: "L'ambiance et l'esprit d'équipe", startup: 30, corporate: 10, remote: 20 },
+                    { text: "Les perspectives d'évolution", startup: 15, corporate: 30, remote: 10 },
+                    { text: "La flexibilité des horaires", startup: 20, corporate: 5, remote: 40 },
+                    { text: "L'impact et l'innovation", startup: 35, corporate: 15, remote: 10 }
+                ]
+            },
+            {
+                question: "Comment préfères-tu organiser ta journée de travail ?",
+                options: [
+                    { text: "En mode projet avec des deadlines serrées", startup: 40, corporate: 20, remote: 10 },
+                    { text: "Avec un emploi du temps bien structuré", startup: 10, corporate: 35, remote: 15 },
+                    { text: "En totale autonomie, où je veux quand je veux", startup: 15, corporate: 5, remote: 45 },
+                    { text: "Un mix de tout ça selon les jours", startup: 35, corporate: 20, remote: 20 }
+                ]
+            },
+            {
+                question: "Quel type d'environnement de travail te motive le plus ?",
+                options: [
+                    { text: "Un open-space dynamique avec des espaces détente", startup: 35, corporate: 15, remote: 5 },
+                    { text: "Un bureau personnel bien aménagé", startup: 10, corporate: 30, remote: 15 },
+                    { text: "Mon canapé, un café shop ou une plage en wifi", startup: 5, corporate: 5, remote: 50 },
+                    { text: "Peu importe tant que le travail est intéressant", startup: 30, corporate: 20, remote: 20 }
+                ]
+            },
+            {
+                question: "Comment réagis-tu face à un nouveau défi professionnel ?",
+                options: [
+                    { text: "Je fonce tête baissée, quitte à faire des erreurs", startup: 40, corporate: 10, remote: 15 },
+                    { text: "Je planifie soigneusement chaque étape", startup: 5, corporate: 35, remote: 10 },
+                    { text: "Je prends du recul pour trouver une solution innovante", startup: 30, corporate: 15, remote: 25 },
+                    { text: "Je consulte d'abord mon équipe ou mon réseau", startup: 15, corporate: 20, remote: 30 }
+                ]
+            },
+            {
+                question: "Quelle est ta relation idéale avec tes collègues ?",
+                options: [
+                    { text: "Une grande famille où on sort souvent ensemble", startup: 35, corporate: 15, remote: 5 },
+                    { text: "Des relations cordiales et professionnelles", startup: 10, corporate: 30, remote: 15 },
+                    { text: "Des échanges virtuels quand c'est nécessaire", startup: 5, corporate: 5, remote: 40 },
+                    { text: "Un mix de tout selon les affinités", startup: 30, corporate: 20, remote: 20 }
+                ]
+            },
+            {
+                question: "Quel style de management te correspond le mieux ?",
+                options: [
+                    { text: "Horizontal, où tout le monde peut tout proposer", startup: 40, corporate: 5, remote: 15 },
+                    { text: "Structuré avec une hiérarchie claire", startup: 5, corporate: 35, remote: 5 },
+                    { text: "En totale autonomie avec des objectifs clairs", startup: 15, corporate: 10, remote: 40 },
+                    { text: "Adaptatif selon les projets et les périodes", startup: 20, corporate: 20, remote: 20 }
+                ]
+            },
+            {
+                question: "Comment envisages-tu ton évolution professionnelle ?",
+                options: [
+                    { text: "Croissance rapide avec des prises de risque", startup: 35, corporate: 10, remote: 15 },
+                    { text: "Une progression régulière et sécurisée", startup: 5, corporate: 35, remote: 10 },
+                    { text: "Une carrière à mon rythme, en accord avec ma vie perso", startup: 10, corporate: 5, remote: 40 },
+                    { text: "Je ne sais pas encore, je veux explorer", startup: 30, corporate: 20, remote: 15 }
+                ]
+            },
+            {
+                question: "Quelle phrase te correspond le mieux ?",
+                options: [
+                    { text: "Move fast and break things", startup: 40, corporate: 5, remote: 5 },
+                    { text: "Think different", startup: 30, corporate: 10, remote: 10 },
+                    { text: "Work hard, play hard", startup: 20, corporate: 35, remote: 15 },
+                    { text: "Work-life balance", startup: 10, corporate: 20, remote: 40 }
+                ]
+            }
+        ];
+
+        // Variables d'état
+        let currentQuestion = 0;
+        let selectedOption = null;
+        let scores = { startup: 0, corporate: 0, remote: 0 };
+        let userAnswers = [];
+
+        // Éléments du DOM
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const startBtn = document.getElementById('start-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const progressText = document.getElementById('progress-text');
+        const scoreText = document.getElementById('score-text');
+        const progressFill = document.getElementById('progress-fill');
+        const startupAvatar = document.getElementById('startup-avatar');
+        const corporateAvatar = document.getElementById('corporate-avatar');
+        const remoteAvatar = document.getElementById('remote-avatar');
+        const resultContainer = document.getElementById('result-container');
+
+        // Écouteurs d'événements
+        startBtn.addEventListener('click', startQuiz);
+        prevBtn.addEventListener('click', showPreviousQuestion);
+        nextBtn.addEventListener('click', showNextQuestion);
+        restartBtn.addEventListener('click', restartQuiz);
+
+        // Fonctions
+        function startQuiz() {
+            welcomeScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            // Mettre à jour la question et les options
+            const question = questions[currentQuestion];
+            questionText.textContent = question.question;
+            
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option-card bg-white p-4 rounded-lg cursor-pointer border border-gray-200';
+                optionElement.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mr-4">
+                            <span class="text-indigo-600 font-medium">${index + 1}</span>
+                        </div>
+                        <span class="text-gray-700">${option.text}</span>
+                    </div>
+                `;
+                
+                optionElement.addEventListener('click', () => selectOption(index));
+                
+                // Vérifier si cette option a déjà été sélectionnée
+                if (userAnswers[currentQuestion] === index) {
+                    optionElement.classList.add('selected');
+                    selectedOption = index;
+                    nextBtn.classList.remove('hidden');
+                }
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Mettre à jour la progression
+            progressText.textContent = Question ${currentQuestion + 1}/${questions.length};
+            progressFill.style.width = ${((currentQuestion + 1) / questions.length) * 100}%;
+            
+            // Mettre à jour les scores affichés
+            updateScoreDisplay();
+            
+            // Gérer la visibilité des boutons
+            prevBtn.classList.toggle('hidden', currentQuestion === 0);
+            nextBtn.classList.add('hidden');
+            
+            // Animation des avatars
+            updateAvatars();
+        }
+
+        function selectOption(index) {
+            // Désélectionner l'option précédente
+            if (selectedOption !== null) {
+                const previousOption = optionsContainer.children[selectedOption];
+                previousOption.classList.remove('selected');
+            }
+            
+            // Sélectionner la nouvelle option
+            const newOption = optionsContainer.children[index];
+            newOption.classList.add('selected');
+            selectedOption = index;
+            
+            // Enregistrer la réponse
+            userAnswers[currentQuestion] = index;
+            
+            // Activer le bouton Suivant
+            nextBtn.classList.remove('hidden');
+        }
+
+        function showNextQuestion() {
+            // Calculer les scores
+            if (selectedOption !== null) {
+                const selectedOptionData = questions[currentQuestion].options[selectedOption];
+                scores.startup += selectedOptionData.startup;
+                scores.corporate += selectedOptionData.corporate;
+                scores.remote += selectedOptionData.remote;
+            }
+            
+            // Passer à la question suivante
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                selectedOption = null;
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showPreviousQuestion() {
+            if (currentQuestion > 0) {
+                // Soustraire les scores de la question actuelle
+                if (userAnswers[currentQuestion] !== undefined) {
+                    const previousAnswer = questions[currentQuestion].options[userAnswers[currentQuestion]];
+                    scores.startup -= previousAnswer.startup;
+                    scores.corporate -= previousAnswer.corporate;
+                    scores.remote -= previousAnswer.remote;
+                }
+                
+                currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        function updateScoreDisplay() {
+            const total = scores.startup + scores.corporate + scores.remote || 1;
+            const startupPercent = Math.round((scores.startup / total) * 100);
+            const corporatePercent = Math.round((scores.corporate / total) * 100);
+            const remotePercent = Math.round((scores.remote / total) * 100);
+            
+            scoreText.textContent = Score: Startup ${startupPercent}% | Corporate ${corporatePercent}% | Remote ${remotePercent}%;
+        }
+
+        function updateAvatars() {
+            const total = scores.startup + scores.corporate + scores.remote || 1;
+            const startupPercent = (scores.startup / total) * 100;
+            const corporatePercent = (scores.corporate / total) * 100;
+            const remotePercent = (scores.remote / total) * 100;
+            
+            // Réinitialiser les avatars
+            startupAvatar.classList.remove('active');
+            corporateAvatar.classList.remove('active');
+            remoteAvatar.classList.remove('active');
+            
+            // Activer l'avatar dominant
+            if (startupPercent > corporatePercent && startupPercent > remotePercent) {
+                startupAvatar.classList.add('active');
+            } else if (corporatePercent > startupPercent && corporatePercent > remotePercent) {
+                corporateAvatar.classList.add('active');
+            } else if (remotePercent > startupPercent && remotePercent > corporatePercent) {
+                remoteAvatar.classList.add('active');
+            }
+        }
+
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            
+            // Calculer le résultat final
+            const total = scores.startup + scores.corporate + scores.remote || 1;
+            const startupPercent = Math.round((scores.startup / total) * 100);
+            const corporatePercent = Math.round((scores.corporate / total) * 100);
+            const remotePercent = Math.round((scores.remote / total) * 100);
+            
+            let resultType = '';
+            let resultTitle = '';
+            let resultDescription = '';
+            let resultColorClass = '';
+            let resultIcon = '';
+            
+            if (startupPercent >= corporatePercent && startupPercent >= remotePercent) {
+                resultType = 'startup';
+                resultTitle = 'Startup Dynamique';
+                resultDescription = 'Tu es fait pour les environnements jeunes et dynamiques où l\'innovation et la rapidité priment. Les startups avec leurs défis permanents et leur ambiance familiale sont ton terrain de jeu idéal. Prêt·e à porter plusieurs casquettes et à apprendre vite, tu t\'épanouis dans le mouvement perpétuel.';
+                resultColorClass = 'bg-gradient-startup';
+                resultIcon = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                `;
+            } else if (corporatePercent >= startupPercent && corporatePercent >= remotePercent) {
+                resultType = 'corporate';
+                resultTitle = 'Corporate Stylé';
+                resultDescription = 'Tu apprécies la structure, les processus clairs et les perspectives d\'évolution bien définies. Les grandes entreprises avec leurs avantages sociaux et leur stabilité te correspondent. Tu sais naviguer dans les environnements complexes et valorises la reconnaissance hiérarchique. Le costume (même décontracté) est ta seconde peau.';
+                resultColorClass = 'bg-gradient-corporate';
+                resultIcon = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                `;
+            } else {
+                resultType = 'remote';
+                resultTitle = 'Remote Tout Confort';
+                resultDescription = 'La liberté et l\'autonomie sont tes maîtres mots. Tu t\'épanouis dans les environnements flexibles où tu peux organiser ton temps comme tu l\'entends. Que ce soit depuis ton canapé, un café ou un pays lointain, tant que tu as ton ordi et une connexion, le monde est ton bureau. Le présentiel obligatoire ? Très peu pour toi !';
+                resultColorClass = 'bg-gradient-remote';
+                resultIcon = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                    </svg>
+                `;
+            }
+            
+            // Afficher le résultat
+            resultContainer.innerHTML = `
+                <div class="result-card w-full max-w-md ${resultColorClass} text-white rounded-2xl shadow-xl p-8 mb-8 floating">
+                    <div class="flex justify-center mb-6">
+                        ${resultIcon}
+                    </div>
+                    <h3 class="text-3xl font-bold mb-4">${resultTitle}</h3>
+                    <p class="mb-6">${resultDescription}</p>
+                </div>
+            `;
+            
+            // Mettre à jour les scores détaillés avec animation
+            setTimeout(() => {
+                document.getElementById('startup-score').textContent = ${startupPercent}%;
+                document.getElementById('corporate-score').textContent = ${corporatePercent}%;
+                document.getElementById('remote-score').textContent = ${remotePercent}%;
+                
+                document.getElementById('startup-bar').style.width = ${startupPercent}%;
+                document.getElementById('corporate-bar').style.width = ${corporatePercent}%;
+                document.getElementById('remote-bar').style.width = ${remotePercent}%;
+            }, 300);
+        }
+
+        function restartQuiz() {
+            // Réinitialiser les variables
+            currentQuestion = 0;
+            selectedOption = null;
+            scores = { startup: 0, corporate: 0, remote: 0 };
+            userAnswers = [];
+            
+            // Revenir à l'écran de quiz
+            resultScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            showQuestion();
+        }
+    </script>
+</body>
+</html>
