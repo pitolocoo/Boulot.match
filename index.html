@@ -5,74 +5,123 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Boulot Match</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f8f9fa; color: #333; }
-    .card { background: white; border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    .button { background-color: #007BFF; color: white; padding: 10px 20px; border: none; border-radius: 6px; margin: 10px 5px; cursor: pointer; font-size: 16px; display: block; width: 100%; }
-    .button:hover { background-color: #0056b3; }
-    h1, h2 { color: #0056b3; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem;
+      text-align: center;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 1rem 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .button {
+      background-color: #6C63FF;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 30px;
+      margin-top: 1rem;
+      cursor: pointer;
+      font-size: 18px;
+    }
+    .button:hover {
+      background-color: #5548d9;
+    }
+    h1, h2 {
+      color: #222;
+    }
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <h1>Découvre ton environnement de travail idéal ✨</h1>
-  <div id="app" class="card"></div>
+  <div class="container">
+    <div id="intro" class="card">
+      <h1>Boulot Match 🎯</h1>
+      <p>Réponds à 10 questions fun pour découvrir quel environnement de travail est fait pour toi !</p>
+      <button class="button" onclick="startGame()">Commencer l'aventure</button>
+    </div>
+    <div id="game" class="card hidden"></div>
+  </div>
 
   <script>
     const questions = [
-      { text: "Quel environnement vous stimule le plus ?", options: ["Open-space vivant", "Espace calme et fermé"] },
-      { text: "Comment aimez-vous collaborer ?", options: ["En équipe permanente", "De façon autonome"] },
-      { text: "Quel rythme préférez-vous ?", options: ["Structuré et prévisible", "Flexible et spontané"] },
-      { text: "Quel type de management vous motive ?", options: ["Inspirant et visionnaire", "Méthodique et clair"] },
-      { text: "Quelle ambiance vous attire ?", options: ["Start-up dynamique", "Corporate stable"] }
+      { text: "Tu préfères commencer ta journée...", options: ["Avec un café en visio", "Autour d'une réunion d'équipe"] },
+      { text: "Ton espace de travail rêvé c’est...", options: ["Un canapé et du Wi-Fi", "Un bureau en open-space"] },
+      { text: "Comment prends-tu tes décisions ?", options: ["À l’instinct", "En suivant des process"] },
+      { text: "Travailler tard, c’est pour...", options: ["Quand je suis à fond dans un projet", "Rarement, je respecte mes horaires"] },
+      { text: "Ton boss idéal est...", options: ["Inspirationnel", "Structuré"] },
+      { text: "Ton rapport à la hiérarchie ?", options: ["Souple et horizontal", "Clair et vertical"] },
+      { text: "En réunion tu es plutôt...", options: ["Force de proposition", "Synthétique et pragmatique"] },
+      { text: "Tu bosses mieux quand...", options: ["Je suis libre de mon emploi du temps", "Mon agenda est bien organisé"] },
+      { text: "Tes collègues sont...", options: ["Des alliés créatifs", "Des partenaires fiables"] },
+      { text: "Face au changement tu es...", options: ["Adaptable et curieux", "Méthodique et prudent"] }
     ];
 
     const profiles = {
-      AAA: { name: "Le Visionnaire Engagé", description: "Tu es motivé·e par des projets de sens, avec une grande autonomie et une équipe engagée.", company: "Start-up sociale à fort impact", tips: "Cherche un cadre flexible, valorisant l'initiative." },
-      AAB: { name: "Le Collaboratif", description: "Tu t'épanouis dans un collectif, en mode projet, avec une dynamique forte.", company: "Scale-up ou coworking créatif", tips: "Opte pour des structures hybrides avec une forte interaction." },
-      ABA: { name: "Le Structuré Équilibré", description: "Tu aimes l'ordre, les objectifs clairs, tout en gardant de l'autonomie.", company: "Grande entreprise agile", tips: "Cherche un environnement bien défini, mais pas rigide." },
-      BBB: { name: "Le Méthodique Discret", description: "Tu préfères travailler dans l’ombre, de manière efficace et stable.", company: "Entreprise corporate ou institution publique", tips: "Un cadre stable et hiérarchisé sera rassurant pour toi." }
+      A: {
+        name: "Le Créatif Nomade",
+        description: "Tu brilles dans des environnements flexibles et stimulants. Start-up, freelance ou remote te vont à merveille !",
+        emoji: "🌈"
+      },
+      B: {
+        name: "Le Stratège Structuré",
+        description: "Tu t’épanouis dans un cadre stable, bien organisé avec des rôles clairs. Tu excelles dans les grandes entreprises et les institutions.",
+        emoji: "🏢"
+      }
     };
 
-    let step = 0;
-    let answers = [];
-    const app = document.getElementById('app');
+    let current = 0;
+    let score = 0;
+
+    function startGame() {
+      document.getElementById('intro').classList.add('hidden');
+      document.getElementById('game').classList.remove('hidden');
+      showQuestion();
+    }
 
     function showQuestion() {
-      const q = questions[step];
-      let html = `<h2>${q.text}</h2>`;
-      q.options.forEach((option, index) => {
-        html += `<button class="button" onclick="answer(${index})">${option}</button>`;
+      const q = questions[current];
+      const game = document.getElementById('game');
+      game.innerHTML = `<h2>Question ${current + 1}/10</h2><p>${q.text}</p>`;
+      q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'button';
+        btn.innerText = opt;
+        btn.onclick = () => answer(index);
+        game.appendChild(btn);
       });
-      app.innerHTML = html;
     }
 
     function answer(choice) {
-      answers.push(choice);
-      step++;
-      if (step >= questions.length) {
-        showResult();
-      } else {
+      if (choice === 0) score++;
+      current++;
+      if (current < questions.length) {
         showQuestion();
+      } else {
+        showResult();
       }
     }
 
     function showResult() {
-      const key = answers.map(a => a === 0 ? "A" : "B").join('').substring(0, 3);
-      const profile = profiles[key] || {
-        name: "Profil Hybride",
-        description: "Tu as un profil équilibré, entre rigueur et créativité.",
-        company: "Entreprise adaptable",
-        tips: "Explore différents environnements pour affiner tes préférences."
-      };
-      app.innerHTML = `
-        <h2>Ton profil : ${profile.name}</h2>
+      const profile = score >= 5 ? profiles.A : profiles.B;
+      document.getElementById('game').innerHTML = `
+        <h2>${profile.emoji} ${profile.name}</h2>
         <p>${profile.description}</p>
-        <p><strong>Entreprise idéale :</strong> ${profile.company}</p>
-        <p><strong>Conseil :</strong> ${profile.tips}</p>
+        <button class="button" onclick="location.reload()">Rejouer</button>
       `;
     }
-
-    // Lancement du jeu
-    showQuestion();
   </script>
 </body>
 </html>
