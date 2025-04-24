@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Boulot Match</title>
+  <title>Boulot Match – Version Avancée</title>
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      background: #f0f4ff;
       color: #333;
     }
     .container {
-      max-width: 700px;
+      max-width: 800px;
       margin: 0 auto;
       padding: 2rem;
       text-align: center;
@@ -25,95 +25,80 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
     .button {
-      background-color: #6C63FF;
+      background-color: #4f46e5;
       color: white;
-      padding: 12px 24px;
+      padding: 12px;
       border: none;
-      border-radius: 30px;
-      margin-top: 1rem;
+      border-radius: 8px;
+      margin: 0.5rem 0;
       cursor: pointer;
-      font-size: 18px;
-      display: block;
       width: 100%;
+      font-size: 16px;
     }
     .button:hover {
-      background-color: #5548d9;
+      background-color: #4338ca;
     }
     h1, h2 {
-      color: #222;
+      color: #1f2937;
     }
-    .hidden {
-      display: none;
+    .hidden { display: none; }
+    .flowchart {
+      text-align: left;
+      font-family: monospace;
+      background: #eef2ff;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 2rem;
+      white-space: pre-wrap;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div id="intro" class="card">
-      <h1>Boulot Match 🎯</h1>
-      <p>Réponds à 10 questions pour découvrir quel environnement de travail est fait pour toi.</p>
-      <button class="button" onclick="startGame()">Commencer l'aventure</button>
+      <h1>Boulot Match 🔍</h1>
+      <p>Réponds à 10 questions à choix multiples pour découvrir ton profil professionnel idéal… avec une vraie analyse de parcours !</p>
+      <button class="button" onclick="startGame()">Commencer</button>
     </div>
     <div id="game" class="card hidden"></div>
   </div>
 
   <script>
     const questions = [
-      { text: "Tu préfères travailler...", options: ["en solo total", "avec des collègues et des échanges"] },
-      { text: "Tu as besoin...", options: ["de liberté totale", "de cadre structurant"] },
-      { text: "Tu es plus...", options: ["créatif et intuitif", "méthodique et logique"] },
-      { text: "Ton ambiance idéale...", options: ["dynamique et mouvante", "posée et stable"] },
-      { text: "Tu aimes...", options: ["lancer des idées et expérimenter", "optimiser ce qui existe"] },
-      { text: "Face à l'inconnu...", options: ["tu fonces !", "tu planifies."] },
-      { text: "Tu préfères un job...", options: ["peu défini mais libre", "avec des missions claires"] },
-      { text: "Ton équipe idéale...", options: ["créative et inspirante", "efficace et fiable"] },
-      { text: "Quand tu bosses tu veux...", options: ["changer le monde", "remplir ta mission"] },
-      { text: "Tu es le genre à...", options: ["inventer ton poste", "respecter l'organigramme"] }
+      { text: "Quand tu commences un projet, tu...", options: ["Lances plein d'idées créatives", "Fais une to-do liste détaillée", "Consultes ton équipe", "T’attaques directement au concret"], axis: ["crea", "org", "collab", "exec"] },
+      { text: "Tu préfères travailler dans un lieu...", options: ["Flexible et vivant", "Calme et structuré", "Avec plein de gens autour", "À distance et librement"], axis: ["crea", "org", "collab", "indep"] },
+      { text: "Quand on te donne une mission, tu...", options: ["Proposes de l’améliorer", "Demande des objectifs clairs", "Cherches à la faire à plusieurs", "L’exécutes à ta façon"], axis: ["crea", "org", "collab", "indep"] },
+      { text: "Tu es plutôt...", options: ["Explorateur", "Gardien des règles", "Connecté à l'équipe", "Loup solitaire"], axis: ["crea", "org", "collab", "indep"] },
+      { text: "Ton moment préféré au travail ?", options: ["Brainstorming créatif", "Rituel d'équipe structuré", "Pause café collective", "Finir seul un gros truc"], axis: ["crea", "org", "collab", "indep"] },
+      { text: "Un imprévu arrive, tu...", options: ["T’adaptes et trouves une solution", "Vérifies les consignes", "Appelles ton binôme", "Réagis vite dans ton coin"], axis: ["crea", "org", "collab", "indep"] },
+      { text: "On te décrit comme...", options: ["Créatif(ve)", "Rigoureux(se)", "Sympa et sociable", "Autonome"], axis: ["crea", "org", "collab", "indep"] },
+      { text: "Tu cherches un job qui...", options: ["Change le monde", "T’offre une carrière stable", "Te connecte aux gens", "Te laisse tranquille"], axis: ["crea", "org", "collab", "indep"] },
+      { text: "Tu aimes apprendre...", options: ["Par essais-erreurs", "En suivant des guides", "Avec les autres", "En autodidacte"] , axis: ["crea", "org", "collab", "indep"] },
+      { text: "Tu préfères être...", options: ["Innovateur", "Pilier structurant", "Moteur collectif", "Sniper indépendant"], axis: ["crea", "org", "collab", "indep"] }
     ];
 
-    const profiles = [
-      {
-        name: "Le Créatif Visionnaire",
-        emoji: "🎨",
-        description: "Tu es fait·e pour explorer, inventer, sortir du cadre. Les environnements agiles et inspirants, comme les startups créatives, sont ton terrain de jeu."
+    const results = {
+      crea: {
+        title: "🎨 Créatif·ve Visionnaire",
+        description: "Tu débordes d'idées, tu veux innover et créer du nouveau. Les environnements agiles, startup, ou artistiques te conviennent."
       },
-      {
-        name: "Le Stratège Structuré",
-        emoji: "🏛️",
-        description: "Tu excelles dans des systèmes clairs, bien organisés. Tu aimes atteindre des objectifs concrets et être reconnu pour ton efficacité."
+      org: {
+        title: "📊 Pilier Structuré",
+        description: "Tu es fiable, organisé·e, tu apportes de la stabilité. Tu brilles dans des cadres clairs : entreprises établies, institutions, gestion."
       },
-      {
-        name: "L'Autonome Engagé",
-        emoji: "🚀",
-        description: "Tu veux du sens, de l’indépendance, et de l'impact. Tu thrives dans des structures à mission, avec une liberté d’initiative."
+      collab: {
+        title: "🤝 Catalyseur·rice d’équipe",
+        description: "Tu tires ta force du collectif. Tu excelles dans les projets d’équipe, les environnements sociaux, et les rôles de lien."
       },
-      {
-        name: "Le Collaboratif Organisé",
-        emoji: "🤝",
-        description: "Tu t'épanouis au sein d’une équipe fiable, dans un cadre où chacun connaît son rôle. Parfait pour des PME ou grandes boîtes humaines."
-      },
-      {
-        name: "L'Explorateur Agile",
-        emoji: "🧭",
-        description: "Tu as besoin de diversité, de mouvement, de découvertes. Tiers-lieux, coworkings et modes hybrides sont faits pour toi."
-      },
-      {
-        name: "Le Technicien Méthodique",
-        emoji: "🛠️",
-        description: "Tu adores optimiser, structurer, rendre les choses fluides. Tu seras heureux dans des environnements industriels, IT ou bien cadrés."
+      indep: {
+        title: "🚀 Autonome Radical·e",
+        description: "Tu avances seul·e, à ton rythme. Freelance, remote, solo builders : les environnements libres sont faits pour toi."
       }
-    ];
-
-    const score = {
-      creative: 0,
-      structure: 0,
-      autonomy: 0,
-      team: 0,
-      explorer: 0,
-      method: 0
     };
 
     let current = 0;
+    const scores = { crea: 0, org: 0, collab: 0, indep: 0 };
+    const flow = [];
 
     function startGame() {
       document.getElementById('intro').classList.add('hidden');
@@ -123,57 +108,33 @@
 
     function showQuestion() {
       const q = questions[current];
-      const game = document.getElementById('game');
-      game.innerHTML = `<h2>Question ${current + 1}/10</h2><p>${q.text}</p>`;
-      q.options.forEach((opt, index) => {
+      const div = document.getElementById('game');
+      div.innerHTML = `<h2>Question ${current + 1}/10</h2><p>${q.text}</p>`;
+      q.options.forEach((opt, idx) => {
         const btn = document.createElement('button');
         btn.className = 'button';
         btn.innerText = opt;
-        btn.onclick = () => answer(index);
-        game.appendChild(btn);
+        btn.onclick = () => answer(idx);
+        div.appendChild(btn);
       });
     }
 
-    function answer(choice) {
-      const mapping = [
-        ["autonomy", "team"],
-        ["autonomy", "structure"],
-        ["creative", "method"],
-        ["explorer", "structure"],
-        ["creative", "method"],
-        ["explorer", "structure"],
-        ["autonomy", "method"],
-        ["creative", "team"],
-        ["creative", "structure"],
-        ["creative", "structure"]
-      ];
-      const axis = mapping[current];
-      score[axis[choice]] += 1;
-
+    function answer(index) {
+      const type = questions[current].axis[index];
+      scores[type]++;
+      flow.push(`Q${current + 1} → ${type.toUpperCase()}`);
       current++;
-      if (current < questions.length) {
-        showQuestion();
-      } else {
-        showResult();
-      }
+      current < questions.length ? showQuestion() : showResult();
     }
 
     function showResult() {
-      const game = document.getElementById('game');
-      const topScore = Object.entries(score).sort((a,b) => b[1] - a[1])[0][0];
-      const profileMap = {
-        creative: 0,
-        structure: 1,
-        autonomy: 2,
-        team: 3,
-        explorer: 4,
-        method: 5
-      };
-      const p = profiles[profileMap[topScore]];
-
-      game.innerHTML = `
-        <h2>${p.emoji} ${p.name}</h2>
-        <p>${p.description}</p>
+      const result = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+      const res = results[result];
+      document.getElementById('game').innerHTML = `
+        <h2>${res.title}</h2>
+        <p>${res.description}</p>
+        <h3>🧭 Cheminement de tes réponses :</h3>
+        <div class="flowchart">${flow.map(f => '→ ' + f).join('\n')}</div>
         <button class="button" onclick="location.reload()">Rejouer</button>
       `;
     }
