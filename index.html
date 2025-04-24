@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Boulot Match – Version Avancée</title>
+  <title>Boulot Match – Résultat Nuancé</title>
   <style>
     body {
       margin: 0;
@@ -42,14 +42,28 @@
       color: #1f2937;
     }
     .hidden { display: none; }
-    .flowchart {
+    .flowchart, .stats {
       text-align: left;
-      font-family: monospace;
       background: #eef2ff;
       padding: 1rem;
       border-radius: 10px;
-      margin-top: 2rem;
+      margin-top: 1rem;
       white-space: pre-wrap;
+    }
+    .stat-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      font-weight: 600;
+    }
+    .stat-value {
+      background-color: #d1d5ff;
+      height: 12px;
+      border-radius: 4px;
+      flex: 1;
+      margin-left: 1rem;
     }
   </style>
 </head>
@@ -65,7 +79,7 @@
 
   <script>
     const questions = [
-      { text: "Quand tu commences un projet, tu...", options: ["Lances plein d'idées créatives", "Fais une to-do liste détaillée", "Consultes ton équipe", "T’attaques directement au concret"], axis: ["crea", "org", "collab", "exec"] },
+      { text: "Quand tu commences un projet, tu...", options: ["Lances plein d'idées créatives", "Fais une to-do liste détaillée", "Consultes ton équipe", "T’attaques directement au concret"], axis: ["crea", "org", "collab", "indep"] },
       { text: "Tu préfères travailler dans un lieu...", options: ["Flexible et vivant", "Calme et structuré", "Avec plein de gens autour", "À distance et librement"], axis: ["crea", "org", "collab", "indep"] },
       { text: "Quand on te donne une mission, tu...", options: ["Proposes de l’améliorer", "Demande des objectifs clairs", "Cherches à la faire à plusieurs", "L’exécutes à ta façon"], axis: ["crea", "org", "collab", "indep"] },
       { text: "Tu es plutôt...", options: ["Explorateur", "Gardien des règles", "Connecté à l'équipe", "Loup solitaire"], axis: ["crea", "org", "collab", "indep"] },
@@ -80,19 +94,19 @@
     const results = {
       crea: {
         title: "🎨 Créatif·ve Visionnaire",
-        description: "Tu débordes d'idées, tu veux innover et créer du nouveau. Les environnements agiles, startup, ou artistiques te conviennent."
+        description: "Tu débordes d'idées et d'initiative. Tu t’épanouis dans les environnements agiles, ouverts, et stimulants."
       },
       org: {
         title: "📊 Pilier Structuré",
-        description: "Tu es fiable, organisé·e, tu apportes de la stabilité. Tu brilles dans des cadres clairs : entreprises établies, institutions, gestion."
+        description: "Tu excelles dans des cadres bien définis. Tu apportes stabilité, rigueur et performance durable."
       },
       collab: {
         title: "🤝 Catalyseur·rice d’équipe",
-        description: "Tu tires ta force du collectif. Tu excelles dans les projets d’équipe, les environnements sociaux, et les rôles de lien."
+        description: "Tu donnes le meilleur de toi-même dans l'échange. Ton énergie alimente le collectif."
       },
       indep: {
         title: "🚀 Autonome Radical·e",
-        description: "Tu avances seul·e, à ton rythme. Freelance, remote, solo builders : les environnements libres sont faits pour toi."
+        description: "Tu fonctionnes avec autonomie et efficacité. Tu cherches liberté et responsabilisation."
       }
     };
 
@@ -128,15 +142,30 @@
     }
 
     function showResult() {
-      const result = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
-      const res = results[result];
-      document.getElementById('game').innerHTML = `
-        <h2>${res.title}</h2>
-        <p>${res.description}</p>
-        <h3>🧭 Cheminement de tes réponses :</h3>
-        <div class="flowchart">${flow.map(f => '→ ' + f).join('\n')}</div>
-        <button class="button" onclick="location.reload()">Rejouer</button>
+      const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
+      const [mainKey, secondaryKey] = [sorted[0][0], sorted[1][0]];
+      const total = sorted.reduce((acc, [, v]) => acc + v, 0);
+      const div = document.getElementById('game');
+
+      let html = `
+        <h2>${results[mainKey].title}</h2>
+        <p>${results[mainKey].description}</p>
+        <h3>📊 Ton profil détaillé :</h3>
+        <div class="stats">
       `;
+
+      sorted.forEach(([k, v]) => {
+        html += `<div class="stat-bar"><span class="stat-label">${results[k].title}</span><div class="stat-value" style="width:${(v/total)*100}%"></div></div>`;
+      });
+
+      html += `</div>
+      <p>Mais on remarque aussi chez toi une tendance à être <strong>${results[secondaryKey].title.split(' ')[1]}</strong>, ce qui enrichit ton profil. Tu es une personne nuancée, capable de t’adapter à plusieurs environnements selon le contexte.</p>
+      <h3>🧭 Cheminement de tes réponses :</h3>
+      <div class="flowchart">${flow.map(f => '→ ' + f).join('\n')}</div>
+      <button class="button" onclick="location.reload()">Rejouer</button>
+      `;
+
+      div.innerHTML = html;
     }
   </script>
 </body>
