@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Boulot Match – Résultat Nuancé</title>
+  <title>Boulot Match – Version 6 Profils</title>
   <style>
     body {
       margin: 0;
@@ -38,9 +38,7 @@
     .button:hover {
       background-color: #4338ca;
     }
-    h1, h2 {
-      color: #1f2937;
-    }
+    h1, h2 { color: #1f2937; }
     .hidden { display: none; }
     .stats {
       text-align: left;
@@ -49,9 +47,7 @@
       border-radius: 10px;
       margin-top: 1rem;
     }
-    .stat-entry {
-      margin-bottom: 12px;
-    }
+    .stat-entry { margin-bottom: 12px; }
     .bar {
       height: 12px;
       border-radius: 4px;
@@ -64,7 +60,7 @@
   <div class="container">
     <div id="intro" class="card">
       <h1>Boulot Match 🔍</h1>
-      <p>Réponds à 10 questions à choix multiples pour découvrir ton profil professionnel idéal… avec une vraie analyse de parcours !</p>
+      <p>Réponds à 10 questions aléatoires pour découvrir ton profil professionnel parmi 6 possibilités, avec une vraie analyse nuancée !</p>
       <button class="button" onclick="startGame()">Commencer</button>
     </div>
     <div id="game" class="card hidden"></div>
@@ -72,75 +68,125 @@
 
   <script>
     const questions = [
-      { text: "Quand tu commences un projet, tu...", options: ["Lances plein d'idées créatives", "Fais une to-do liste détaillée", "Consultes ton équipe", "T’attaques directement au concret"], axis: ["crea", "org", "collab", "indep"] },
-      { text: "Tu préfères travailler dans un lieu...", options: ["Flexible et vivant", "Calme et structuré", "Avec plein de gens autour", "À distance et librement"], axis: ["crea", "org", "collab", "indep"] },
-      { text: "Quand on te donne une mission, tu...", options: ["Proposes de l’améliorer", "Demande des objectifs clairs", "Cherches à la faire à plusieurs", "L’exécutes à ta façon"], axis: ["crea", "org", "collab", "indep"] },
-      { text: "Tu es plutôt...", options: ["Explorateur", "Gardien des règles", "Connecté à l'équipe", "Loup solitaire"], axis: ["crea", "org", "collab", "indep"] },
-      { text: "Ton moment préféré au travail ?", options: ["Brainstorming créatif", "Rituel d'équipe structuré", "Pause café collective", "Finir seul un gros truc"], axis: ["crea", "org", "collab", "indep"] },
-      { text: "Un imprévu arrive, tu...", options: ["T’adaptes et trouves une solution", "Vérifies les consignes", "Appelles ton binôme", "Réagis vite dans ton coin"], axis: ["crea", "org", "collab", "indep"] },
-      { text: "On te décrit comme...", options: ["Créatif(ve)", "Rigoureux(se)", "Sympa et sociable", "Autonome"], axis: ["crea", "org", "collab", "indep"] },
-      { text: "Tu cherches un job qui...", options: ["Change le monde", "T’offre une carrière stable", "Te connecte aux gens", "Te laisse tranquille"], axis: ["crea", "org", "collab", "indep"] },
-      { text: "Tu aimes apprendre...", options: ["Par essais-erreurs", "En suivant des guides", "Avec les autres", "En autodidacte"] , axis: ["crea", "org", "collab", "indep"] },
-      { text: "Tu préfères être...", options: ["Innovateur", "Pilier structurant", "Moteur collectif", "Sniper indépendant"], axis: ["crea", "org", "collab", "indep"] }
+      { text: "Comment préfères-tu démarrer une journée de travail ?", options: [
+        { text: "Par une réunion d'équipe", axis: "collab" },
+        { text: "En solo avec mes objectifs", axis: "indep" },
+        { text: "Avec un café et un brainstorming", axis: "crea" },
+        { text: "En suivant un rituel précis", axis: "structure" }
+      ]},
+      { text: "Tu te sens le plus utile quand...", options: [
+        { text: "Tu règles des problèmes techniques", axis: "method" },
+        { text: "Tu fais avancer le collectif", axis: "collab" },
+        { text: "Tu proposes une nouvelle vision", axis: "crea" },
+        { text: "Tu explores de nouvelles approches", axis: "explorer" }
+      ]},
+      { text: "Ton bureau idéal ?", options: [
+        { text: "Un atelier bien équipé", axis: "method" },
+        { text: "Un open-space dynamique", axis: "collab" },
+        { text: "Un lieu calme en remote", axis: "indep" },
+        { text: "Un espace de coworking créatif", axis: "explorer" }
+      ]},
+      { text: "Ton rapport aux règles ?", options: [
+        { text: "Utile pour avancer efficacement", axis: "structure" },
+        { text: "À contourner quand c'est nécessaire", axis: "crea" },
+        { text: "Je crée les miennes", axis: "indep" },
+        { text: "À adapter selon les situations", axis: "explorer" }
+      ]},
+      { text: "Tu préfères apprendre...", options: [
+        { text: "Sur le terrain avec les autres", axis: "collab" },
+        { text: "En autodidacte", axis: "indep" },
+        { text: "En suivant une méthode claire", axis: "structure" },
+        { text: "En testant des idées originales", axis: "crea" }
+      ]},
+      { text: "Dans un projet, tu es plutôt...", options: [
+        { text: "Le garant de la rigueur", axis: "method" },
+        { text: "Celui qui motive les troupes", axis: "collab" },
+        { text: "La tête chercheuse", axis: "explorer" },
+        { text: "L'esprit libre qui invente", axis: "crea" }
+      ]},
+      { text: "Ce qui te booste le plus ?", options: [
+        { text: "Des idées à tester", axis: "explorer" },
+        { text: "Un plan structuré", axis: "structure" },
+        { text: "Une mission en autonomie", axis: "indep" },
+        { text: "Une équipe soudée", axis: "collab" }
+      ]},
+      { text: "Tu aimes quand...", options: [
+        { text: "Il y a de la nouveauté", axis: "crea" },
+        { text: "Les process sont clairs", axis: "structure" },
+        { text: "On peut collaborer facilement", axis: "collab" },
+        { text: "Je peux améliorer l’existant", axis: "method" }
+      ]},
+      { text: "On te dit souvent que tu es...", options: [
+        { text: "Créatif·ve", axis: "crea" },
+        { text: "Fiable et méthodique", axis: "method" },
+        { text: "Positif·ve et humain·e", axis: "collab" },
+        { text: "Visionnaire et autonome", axis: "indep" }
+      ]},
+      { text: "Ton type d’entreprise rêvée ?", options: [
+        { text: "Une startup innovante", axis: "crea" },
+        { text: "Une organisation stable et claire", axis: "structure" },
+        { text: "Une structure horizontale et libre", axis: "indep" },
+        { text: "Un collectif pluridisciplinaire", axis: "explorer" }
+      ]}
     ];
 
-    const results = {
-      crea: {
-        title: "🎨 Créatif·ve Visionnaire",
-        description: "Tu débordes d'idées et d'initiative. Tu t’épanouis dans les environnements agiles, ouverts, et stimulants."
-      },
-      org: {
-        title: "📊 Pilier Structuré",
-        description: "Tu excelles dans des cadres bien définis. Tu apportes stabilité, rigueur et performance durable."
-      },
-      collab: {
-        title: "🤝 Catalyseur·rice d’équipe",
-        description: "Tu donnes le meilleur de toi-même dans l'échange. Ton énergie alimente le collectif."
-      },
-      indep: {
-        title: "🚀 Autonome Radical·e",
-        description: "Tu fonctionnes avec autonomie et efficacité. Tu cherches liberté et responsabilisation."
-      }
+    const profiles = {
+      crea: { icon: "🎨", name: "Le·la Créatif·ve Visionnaire" },
+      structure: { icon: "🏛", name: "Le·la Stratège Structuré·e" },
+      indep: { icon: "🚀", name: "L'Autonome Engagé·e" },
+      collab: { icon: "🤝", name: "Le·la Collaboratif·ve Organisé·e" },
+      explorer: { icon: "🧭", name: "L'Explorateur·rice Agile" },
+      method: { icon: "🛠", name: "Le·la Technicien·ne Méthodique" }
     };
 
     let current = 0;
-    const scores = { crea: 0, org: 0, collab: 0, indep: 0 };
+    const scores = { crea: 0, structure: 0, indep: 0, collab: 0, explorer: 0, method: 0 };
 
     function startGame() {
+      current = 0;
+      Object.keys(scores).forEach(k => scores[k] = 0);
+      questions.forEach(q => shuffle(q.options));
+      shuffle(questions);
       document.getElementById('intro').classList.add('hidden');
       document.getElementById('game').classList.remove('hidden');
       showQuestion();
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
     }
 
     function showQuestion() {
       const q = questions[current];
       const div = document.getElementById('game');
       div.innerHTML = `<h2>Question ${current + 1}/10</h2><p>${q.text}</p>`;
-      q.options.forEach((opt, idx) => {
+      q.options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'button';
-        btn.innerText = opt;
-        btn.onclick = () => answer(idx);
+        btn.innerText = opt.text;
+        btn.onclick = () => answer(opt.axis);
         div.appendChild(btn);
       });
     }
 
-    function answer(index) {
-      const type = questions[current].axis[index];
-      scores[type]++;
+    function answer(axis) {
+      scores[axis]++;
       current++;
-      current < questions.length ? showQuestion() : showResult();
+      current < 10 ? showQuestion() : showResult();
     }
 
     function showResult() {
+      const total = Object.values(scores).reduce((a, b) => a + b, 0);
       const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
-      const [mainKey, secondaryKey] = [sorted[0][0], sorted[1][0]];
-      const total = sorted.reduce((acc, [, v]) => acc + v, 0);
+      const [main, second] = [sorted[0], sorted[1]];
       const div = document.getElementById('game');
 
       let html = `
-        <h2>${results[mainKey].title}</h2>
-        <p>${results[mainKey].description}</p>
+        <h2>${profiles[main[0]].icon} ${profiles[main[0]].name}</h2>
+        <p>Tu corresponds principalement au profil <strong>${profiles[main[0]].name}</strong>. Tu exprimes une forte tendance à fonctionner dans cet univers, mais tu as aussi des nuances intéressantes !</p>
         <h3>📊 Ton profil détaillé :</h3>
         <div class="stats">
       `;
@@ -148,14 +194,14 @@
       sorted.forEach(([k, v]) => {
         const percent = Math.round((v / total) * 100);
         html += `<div class="stat-entry">
-          <div>${results[k].title} – ${percent}%</div>
+          <div>${profiles[k].icon} ${profiles[k].name} – ${percent}%</div>
           <div class="bar" style="width:${percent}%; background-color:${getColor(k)}"></div>
         </div>`;
       });
 
       html += `</div>
-      <p>Mais on remarque aussi chez toi une tendance à être <strong>${results[secondaryKey].title.split(' ')[1]}</strong>, ce qui enrichit ton profil. Tu es une personne nuancée, capable de t’adapter à plusieurs environnements selon le contexte.</p>
-      <button class="button" onclick="location.reload()">Rejouer</button>
+        <p>On remarque aussi une vraie sensibilité vers <strong>${profiles[second[0]].name}</strong>. Tu es une personne complète, capable d’agir dans plusieurs contextes selon les besoins.</p>
+        <button class="button" onclick="location.reload()">Rejouer</button>
       `;
 
       div.innerHTML = html;
@@ -164,9 +210,11 @@
     function getColor(type) {
       return {
         crea: '#a78bfa',
-        org: '#60a5fa',
+        structure: '#60a5fa',
+        indep: '#fbbf24',
         collab: '#34d399',
-        indep: '#fbbf24'
+        explorer: '#f472b6',
+        method: '#9ca3af'
       }[type];
     }
   </script>
