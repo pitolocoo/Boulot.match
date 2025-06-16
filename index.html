@@ -2,221 +2,211 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Boulot Match – Version 6 Profils</title>
+  <title>Boulot Match – Test de personnalité pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f0f4ff;
-      color: #333;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 2rem;
-      text-align: center;
-    }
-    .card {
-      background: white;
-      border-radius: 16px;
-      padding: 2rem;
-      margin: 1rem 0;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-    .button {
-      background-color: #4f46e5;
-      color: white;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      margin: 0.5rem 0;
-      cursor: pointer;
-      width: 100%;
-      font-size: 16px;
-    }
-    .button:hover {
-      background-color: #4338ca;
-    }
-    h1, h2 { color: #1f2937; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f9fafb; margin: 0; padding: 0; }
+    .container { max-width: 800px; margin: 2rem auto; padding: 1rem; }
+    .card { background: #fff; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .button { display: block; background: #4f46e5; color: white; border: none; padding: 0.8rem; border-radius: 8px; font-size: 1rem; margin: 0.5rem 0; cursor: pointer; }
+    .button:hover { background: #4338ca; }
+    h1, h2 { color: #111827; }
     .hidden { display: none; }
-    .stats {
-      text-align: left;
-      background: #eef2ff;
-      padding: 1rem;
-      border-radius: 10px;
-      margin-top: 1rem;
-    }
-    .stat-entry { margin-bottom: 12px; }
-    .bar {
-      height: 12px;
-      border-radius: 4px;
-      margin: 4px 0 6px;
-      background-color: #d1d5ff;
-    }
+    .progress-bar { background: #e0e7ff; border-radius: 5px; overflow: hidden; height: 14px; margin-top: 5px; }
+    .bar-fill { height: 100%; background: #6366f1; transition: width 0.5s ease; }
+    .stat { margin-bottom: 1rem; }
   </style>
 </head>
 <body>
   <div class="container">
     <div id="intro" class="card">
-      <h1>Boulot Match 🔍</h1>
-      <p>Réponds à 10 questions aléatoires pour découvrir ton profil professionnel parmi 6 possibilités, avec une vraie analyse nuancée !</p>
-      <button class="button" onclick="startGame()">Commencer</button>
+      <h1>🔍 Bienvenue sur Boulot Match</h1>
+      <p>Réponds à 20 questions pour découvrir ton profil professionnel parmi 6 archétypes différents. À toi de jouer !</p>
+      <button class="button" onclick="startTest()">Commencer le test</button>
     </div>
-    <div id="game" class="card hidden"></div>
+
+    <div id="question" class="card hidden"></div>
+    <div id="result" class="card hidden"></div>
   </div>
 
   <script>
-    const questions = [
-      { text: "Comment préfères-tu démarrer une journée de travail ?", options: [
-        { text: "Par une réunion d'équipe", axis: "collab" },
-        { text: "En solo avec mes objectifs", axis: "indep" },
-        { text: "Avec un café et un brainstorming", axis: "crea" },
-        { text: "En suivant un rituel précis", axis: "structure" }
-      ]},
-      { text: "Tu te sens le plus utile quand...", options: [
-        { text: "Tu règles des problèmes techniques", axis: "method" },
-        { text: "Tu fais avancer le collectif", axis: "collab" },
-        { text: "Tu proposes une nouvelle vision", axis: "crea" },
-        { text: "Tu explores de nouvelles approches", axis: "explorer" }
-      ]},
-      { text: "Ton bureau idéal ?", options: [
-        { text: "Un atelier bien équipé", axis: "method" },
-        { text: "Un open-space dynamique", axis: "collab" },
-        { text: "Un lieu calme en remote", axis: "indep" },
-        { text: "Un espace de coworking créatif", axis: "explorer" }
-      ]},
-      { text: "Ton rapport aux règles ?", options: [
-        { text: "Utile pour avancer efficacement", axis: "structure" },
-        { text: "À contourner quand c'est nécessaire", axis: "crea" },
-        { text: "Je crée les miennes", axis: "indep" },
-        { text: "À adapter selon les situations", axis: "explorer" }
-      ]},
-      { text: "Tu préfères apprendre...", options: [
-        { text: "Sur le terrain avec les autres", axis: "collab" },
-        { text: "En autodidacte", axis: "indep" },
-        { text: "En suivant une méthode claire", axis: "structure" },
-        { text: "En testant des idées originales", axis: "crea" }
-      ]},
-      { text: "Dans un projet, tu es plutôt...", options: [
-        { text: "Le garant de la rigueur", axis: "method" },
-        { text: "Celui qui motive les troupes", axis: "collab" },
-        { text: "La tête chercheuse", axis: "explorer" },
-        { text: "L'esprit libre qui invente", axis: "crea" }
-      ]},
-      { text: "Ce qui te booste le plus ?", options: [
-        { text: "Des idées à tester", axis: "explorer" },
-        { text: "Un plan structuré", axis: "structure" },
-        { text: "Une mission en autonomie", axis: "indep" },
-        { text: "Une équipe soudée", axis: "collab" }
-      ]},
-      { text: "Tu aimes quand...", options: [
-        { text: "Il y a de la nouveauté", axis: "crea" },
-        { text: "Les process sont clairs", axis: "structure" },
-        { text: "On peut collaborer facilement", axis: "collab" },
-        { text: "Je peux améliorer l’existant", axis: "method" }
-      ]},
-      { text: "On te dit souvent que tu es...", options: [
-        { text: "Créatif·ve", axis: "crea" },
-        { text: "Fiable et méthodique", axis: "method" },
-        { text: "Positif·ve et humain·e", axis: "collab" },
-        { text: "Visionnaire et autonome", axis: "indep" }
-      ]},
-      { text: "Ton type d’entreprise rêvée ?", options: [
-        { text: "Une startup innovante", axis: "crea" },
-        { text: "Une organisation stable et claire", axis: "structure" },
-        { text: "Une structure horizontale et libre", axis: "indep" },
-        { text: "Un collectif pluridisciplinaire", axis: "explorer" }
-      ]}
-    ];
-
     const profiles = {
-      crea: { icon: "🎨", name: "Le·la Créatif·ve Visionnaire" },
-      structure: { icon: "🏛", name: "Le·la Stratège Structuré·e" },
-      indep: { icon: "🚀", name: "L'Autonome Engagé·e" },
-      collab: { icon: "🤝", name: "Le·la Collaboratif·ve Organisé·e" },
-      explorer: { icon: "🧭", name: "L'Explorateur·rice Agile" },
-      method: { icon: "🛠", name: "Le·la Technicien·ne Méthodique" }
+      "creatif": { label: "🎨 Créatif·ve Visionnaire", score: 0 },
+      "structure": { label: "🏛 Stratège Structuré·e", score: 0 },
+      "autonome": { label: "🚀 Autonome Engagé·e", score: 0 },
+      "collaboratif": { label: "🤝 Collaboratif·ve Organisé·e", score: 0 },
+      "explorateur": { label: "🧭 Explorateur·rice Agile", score: 0 },
+      "technique": { label: "🛠 Technicien·ne Méthodique", score: 0 }
     };
 
-    let current = 0;
-    const scores = { crea: 0, structure: 0, indep: 0, collab: 0, explorer: 0, method: 0 };
+    let questions = [
+      {
+        text: "Quand tu démarres une nouvelle mission, tu préfères...",
+        options: [
+          { text: "Laisser libre cours à ta créativité pour innover", profile: "creatif" },
+          { text: "Structurer les étapes et les objectifs", profile: "structure" },
+          { text: "Explorer différents angles sans pression", profile: "explorateur" },
+          { text: "Comprendre les besoins de l’équipe avant tout", profile: "collaboratif" }
+        ]
+      },
+      // (Les 19 autres questions seront ajoutées dans la suite)
+    ];
 
-    function startGame() {
-      current = 0;
-      Object.keys(scores).forEach(k => scores[k] = 0);
-      questions.forEach(q => shuffle(q.options));
-      shuffle(questions);
-      document.getElementById('intro').classList.add('hidden');
-      document.getElementById('game').classList.remove('hidden');
-      showQuestion();
+    let currentQuestion = 0;
+    let answers = [];
+
+    function shuffleArray(array) {
+      return [...array].sort(() => Math.random() - 0.5);
     }
 
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+    function startTest() {
+      document.getElementById("intro").classList.add("hidden");
+      document.getElementById("question").classList.remove("hidden");
+      questions = shuffleArray(questions);
+      showQuestion();
+    }
+  {
+    text: "Tu es seul·e au bureau, entre midi et deux. Tu as une heure de libre. Tu :",
+    options: [
+      { text: "Regardes une vidéo technique à approfondir", profile: "technique" },
+      { text: "Dessines ou notes une idée créative", profile: "creatif" },
+      { text: "Pars marcher sans objectif précis", profile: "explorateur" },
+      { text: "Proposes un café à tes collègues", profile: "collaboratif" }
+    ]
+  },
+  {
+    text: "Un·e nouveau·lle collègue arrive, un peu perdue. Tu :",
+    options: [
+      { text: "Lui proposes un temps calme en face-à-face", profile: "autonome" },
+      { text: "Prépares un document de repères", profile: "technique" },
+      { text: "Lances un icebreaker en équipe", profile: "collaboratif" },
+      { text: "Lui proposes une mission personnelle", profile: "creatif" }
+    ]
+  },
+  {
+    text: "En visio, un projet important flotte sans preneur. Tu :",
+    options: [
+      { text: "Te proposes si les rôles sont clairs", profile: "collaboratif" },
+      { text: "Réfléchis seul·e et avances discrètement", profile: "autonome" },
+      { text: "Organises un kick-off précis", profile: "structure" },
+      { text: "Lances une idée originale", profile: "creatif" }
+    ]
+  },
+  {
+    text: "Tu crois en un projet. Pour convaincre ta direction, tu :",
+    options: [
+      { text: "Prépares un pitch argumenté", profile: "structure" },
+      { text: "Montres un prototype visuel", profile: "creatif" },
+      { text: "Rassembles du soutien collectif", profile: "collaboratif" },
+      { text: "Tests avec quelques utilisateurs", profile: "explorateur" }
+    ]
+  },
+  {
+    text: "Tu dois choisir entre deux tâches importantes. Tu :",
+    options: [
+      { text: "Choisis la plus stratégique", profile: "structure" },
+      { text: "Celle qui débloque le plus l’équipe", profile: "collaboratif" },
+      { text: "Celle qui te stimule sur le moment", profile: "explorateur" },
+      { text: "Celle qui peut être finie efficacement", profile: "technique" }
+    ]
+  },
+  {
+    text: "Tu reçois un feedback négatif sec. Tu :",
+    options: [
+      { text: "Prends du recul en solo", profile: "autonome" },
+      { text: "Poses des questions pour clarifier", profile: "collaboratif" },
+      { text: "Améliores ton livrable avec rigueur", profile: "technique" },
+      { text: "Imagines une nouvelle approche", profile: "creatif" }
+    ]
+  },
+  {
+    text: "On te propose un rôle d’ambassadeur inter-équipes. Tu :",
+    options: [
+      { text: "Acceptes si les rôles sont clairs", profile: "structure" },
+      { text: "Refuses pour te concentrer sur ta tâche", profile: "technique" },
+      { text: "Acceptes avec enthousiasme", profile: "collaboratif" },
+      { text: "Proposes un format créatif", profile: "creatif" }
+    ]
+  },
+  {
+    text: "Tu commences un nouveau poste sans explication. Tu :",
+    options: [
+      { text: "Te formes en solo dans les documents", profile: "autonome" },
+      { text: "Invites des collègues à déjeuner", profile: "collaboratif" },
+      { text: "Crées un tableau de bord perso", profile: "technique" },
+      { text: "Repères les failles à améliorer", profile: "creatif" }
+    ]
+  },
+  {
+    text: "On te propose de piloter un projet nouveau. Tu :",
+    options: [
+      { text: "Organises une vision collective", profile: "collaboratif" },
+      { text: "Proposes une première architecture", profile: "structure" },
+      { text: "Tests une version rapide", profile: "explorateur" },
+      { text: "Proposes un format décalé", profile: "creatif" }
+    ]
+  },
+  {
+    text: "Ton manager part 3 semaines. Tu :",
+    options: [
+      { text: "Crées un point hebdo avec liberté", profile: "collaboratif" },
+      { text: "Mets à jour le tableau de bord", profile: "technique" },
+      { text: "Supprimes des rituels inefficaces", profile: "explorateur" },
+      { text: "Continues ton travail en autonomie", profile: "autonome" }
+    ]
+  }
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      const container = document.getElementById("question");
+      const options = shuffleArray(q.options);
+      let html = `<h2>Question ${currentQuestion + 1} / ${questions.length}</h2><p>${q.text}</p>`;
+      options.forEach(opt => {
+        html += `<button class="button" onclick="selectAnswer('${opt.profile}')">${opt.text}</button>`;
+      });
+      container.innerHTML = html;
+    }
+
+    function selectAnswer(profile) {
+      profiles[profile].score += 1;
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
       }
     }
 
-    function showQuestion() {
-      const q = questions[current];
-      const div = document.getElementById('game');
-      div.innerHTML = `<h2>Question ${current + 1}/10</h2><p>${q.text}</p>`;
-      q.options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'button';
-        btn.innerText = opt.text;
-        btn.onclick = () => answer(opt.axis);
-        div.appendChild(btn);
-      });
-    }
-
-    function answer(axis) {
-      scores[axis]++;
-      current++;
-      current < 10 ? showQuestion() : showResult();
-    }
-
     function showResult() {
-      const total = Object.values(scores).reduce((a, b) => a + b, 0);
-      const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
-      const [main, second] = [sorted[0], sorted[1]];
-      const div = document.getElementById('game');
+      document.getElementById("question").classList.add("hidden");
+      const container = document.getElementById("result");
+      container.classList.remove("hidden");
 
-      let html = `
-        <h2>${profiles[main[0]].icon} ${profiles[main[0]].name}</h2>
-        <p>Tu corresponds principalement au profil <strong>${profiles[main[0]].name}</strong>. Tu exprimes une forte tendance à fonctionner dans cet univers, mais tu as aussi des nuances intéressantes !</p>
-        <h3>📊 Ton profil détaillé :</h3>
-        <div class="stats">
-      `;
+      // Calcule des pourcentages
+      const total = Object.values(profiles).reduce((sum, p) => sum + p.score, 0);
+      const scores = Object.entries(profiles).map(([key, p]) => ({
+        label: p.label,
+        score: p.score,
+        percent: total ? Math.round((p.score / total) * 100) : 0
+      })).sort((a, b) => b.percent - a.percent);
 
-      sorted.forEach(([k, v]) => {
-        const percent = Math.round((v / total) * 100);
-        html += `<div class="stat-entry">
-          <div>${profiles[k].icon} ${profiles[k].name} – ${percent}%</div>
-          <div class="bar" style="width:${percent}%; background-color:${getColor(k)}"></div>
-        </div>`;
+      const dominant = scores[0];
+      const secondary = scores[1];
+
+      let html = `<h2>Ton profil dominant : ${dominant.label}</h2>`;
+      html += `<p>Mais tu présentes aussi des traits de : <strong>${secondary.label}</strong></p>`;
+      html += `<h3>Profil détaillé :</h3><div class="stats">`;
+
+      scores.forEach(s => {
+        html += `
+          <div class="stat">
+            <strong>${s.label} – ${s.percent}%</strong>
+            <div class="progress-bar"><div class="bar-fill" style="width:${s.percent}%; background-color: ${
+              s.label.includes("Créatif") ? "#f59e0b" :
+              s.label.includes("Stratège") ? "#3b82f6" :
+              s.label.includes("Autonome") ? "#10b981" :
+              s.label.includes("Collaboratif") ? "#ec4899" :
+              s.label.includes("Explorateur") ? "#a855f7" :
+              "#6b7280"
+            }"></div></div>
+          </div>`;
       });
-
-      html += `</div>
-        <p>On remarque aussi une vraie sensibilité vers <strong>${profiles[second[0]].name}</strong>. Tu es une personne complète, capable d’agir dans plusieurs contextes selon les besoins.</p>
-        <button class="button" onclick="location.reload()">Rejouer</button>
-      `;
-
-      div.innerHTML = html;
-    }
-
-    function getColor(type) {
-      return {
-        crea: '#a78bfa',
-        structure: '#60a5fa',
-        indep: '#fbbf24',
-        collab: '#34d399',
-        explorer: '#f472b6',
-        method: '#9ca3af'
-      }[type];
-    }
-  </script>
-</body>
-</html>
